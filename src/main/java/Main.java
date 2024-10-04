@@ -30,6 +30,7 @@ public class Main {
                     clientSocket.getOutputStream().flush(); // Ensure the response is sent
                 }
             }
+            
        } catch (IOException e) {
          System.out.println("IOException: " + e.getMessage());
        } finally {
