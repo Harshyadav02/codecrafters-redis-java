@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class Echo {
 
 
@@ -6,8 +8,8 @@ public class Echo {
 
         String msgArray[] = msg.split("[^a-zA-Z]+");
 
-        String s = Arrays.stream(msgArray).filter(word -> !word.isEmpty()).toString();
+        msg = Arrays.stream(msgArray).filter(word -> !word.isEmpty()).collect(Collectors.joining(" "));
 
-        System.out.println(s);
+        System.out.println(msg);
     }
 }
