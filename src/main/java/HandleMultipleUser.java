@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class HandleMultipleUser extends Thread {
-    private Socket clientSocket;
+    private final Socket clientSocket;
 
     // Constructor to accept client socket
     public HandleMultipleUser(Socket clientSocket) {
@@ -26,6 +26,7 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().flush(); // Ensure the response is sent
                 }
                 if(inputLine.contains("ECHO")){
+                    System.out.println("input for echo is "+inputLine);
                     Echo.printMsg(inputLine);
                 }
             }
