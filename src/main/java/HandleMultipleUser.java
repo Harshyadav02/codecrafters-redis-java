@@ -25,6 +25,9 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
                     clientSocket.getOutputStream().flush(); // Ensure the response is sent
                 }
+                if(inputLine.contains("ECHO")){
+                    Echo.printMsg(inputLine);
+                }
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
