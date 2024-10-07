@@ -1,45 +1,37 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Main {
-  public static void main(String[] args){
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
-    System.out.println("Logs from your program will appear here!");
-    //  Uncomment this block to pass the first stage
-       ServerSocket serverSocket = null;
-       Socket clientSocket = null;
-       int port = 6379;
-       try {
-         serverSocket = new ServerSocket(port);
-         // Since the tester restarts your program quite often, setting SO_REUSEADDR
-         // ensures that we don't run into 'Address already in use' errors
-         serverSocket.setReuseAddress(true);
-         // Wait for connection from client.
-         clientSocket = serverSocket.accept();
-    
-         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    public static void main(String[] args) {
+        System.out.println("Server started. Logs will appear here!");
 
-            // Loop to handle multiple PING commands
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                if (inputLine.trim().equalsIgnoreCase("PING")) {
-                    clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
-                    clientSocket.getOutputStream().flush(); // Ensure the response is sent
+        int port = 6379;
+        ServerSocket serverSocket = null;
+
+        try {
+            serverSocket = new ServerSocket(port);
+            serverSocket.setReuseAddress(true); // Allow reuse of the port
+
+            // Continuously listen for new client connections
+            while (true) {
+                Socket clientSocket = serverSocket.accept(); // Accept a new client
+                
+
+                // Create a new thread to handle this client
+                HandleMultipleUser clientHandler = new HandleMultipleUser(clientSocket);
+                clientHandler.start(); // Start the thread
+            }
+        } catch (IOException e) {
+            System.out.println("IOException: " + e.getMessage());
+        } finally {
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    System.out.println("IOException: " + e.getMessage());
                 }
             }
-       } catch (IOException e) {
-         System.out.println("IOException: " + e.getMessage());
-       } finally {
-         try {
-           if (clientSocket != null) {
-             clientSocket.close();
-           }
-         } catch (IOException e) {
-           System.out.println("IOException: " + e.getMessage());
-         }
-       }
-  }
+        }
+    }
 }
