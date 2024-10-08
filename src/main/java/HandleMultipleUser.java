@@ -35,7 +35,7 @@ public class HandleMultipleUser extends Thread {
                 else if ("ECHO".equalsIgnoreCase(inputLine)) {
                     in.readLine();
                     String message = in.readLine();
-                    System.out.println("message is -> "+message);
+
                     clientSocket.getOutputStream().write(
                             String.format("$%d\r\n%s\r\n", message.length(), message)
                                     .getBytes());
