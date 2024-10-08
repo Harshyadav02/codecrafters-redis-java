@@ -50,7 +50,7 @@ public class HandleMultipleUser extends Thread {
                         String value = in.readLine();       // extracting the actual value
                         String timeVariable = in.readLine();// skipping size of time variable
                         System.out.println("time variable : "+timeVariable);
-                        if(timeVariable !=null)
+                        if("$2".equalsIgnoreCase(timeVariable))
                         {    System.out.println("time variable is not null");
                             in.readLine();                      // skipping  time variable
                             in.readLine();                      // skipping size of time in millisecond
