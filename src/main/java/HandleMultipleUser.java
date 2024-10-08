@@ -51,7 +51,7 @@ public class HandleMultipleUser extends Thread {
                         GetSet.setKey(map,key,value);
                         clientSocket.getOutputStream().write("OK\r\n".getBytes());
                         clientSocket.getOutputStream().flush();
-                    System.out.println(map);
+//                    System.out.println(map);
                 }
                 else if("GET".equalsIgnoreCase(inputLine)){
                     in.readLine();
@@ -62,7 +62,7 @@ public class HandleMultipleUser extends Thread {
                                 String.format("$%d\r\n%s\r\n",value.toString().length(),value).getBytes());
                         clientSocket.getOutputStream().flush();
                     }
-                    System.out.println(map);
+//                    System.out.println(map);
                 }
             }
         } catch (IOException e) {
