@@ -48,11 +48,16 @@ public class HandleMultipleUser extends Thread {
                         String key = in.readLine();         // extracting the actual key
                         in.readLine();                      // skipping size of value
                         String value = in.readLine();       // extracting the actual value
-                        in.readLine();                      // skipping size of time variable
-                        in.readLine();                      // skipping  time variable
-                        in.readLine();                      // skipping size of time in millisecond
-                        Long expTime= Long.parseLong(in.readLine());   // extracting the actual time
-                        GetSet.setKeyWithExpiry(map,key,value,expTime);
+                        String timeVariable = in.readLine();// skipping size of time variable
+                        if(timeVariable !=null)
+                        {
+                            in.readLine();                      // skipping  time variable
+                            in.readLine();                      // skipping size of time in millisecond
+                            Long expTime= Long.parseLong(in.readLine());   // extracting the actual time
+                            GetSet.setKeyWithExpiry(map,key,value,expTime);
+                        }else{
+                            GetSet.setKeyWithExpiry(map,key,value,null);
+                        }
                         clientSocket.getOutputStream().write("+OK\r\n".getBytes());
                         clientSocket.getOutputStream().flush();
                 }
