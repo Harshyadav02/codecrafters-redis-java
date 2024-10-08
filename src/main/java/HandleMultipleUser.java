@@ -49,7 +49,7 @@ public class HandleMultipleUser extends Thread {
                         in.readLine();
                         String value = in.readLine();
                         GetSet.setKey(map,key,value);
-                        clientSocket.getOutputStream().write("OK".getBytes());
+                        clientSocket.getOutputStream().write("+OK\r\n".getBytes());
                         clientSocket.getOutputStream().flush();
                 }
                 else if("GET".equalsIgnoreCase(inputLine)){
