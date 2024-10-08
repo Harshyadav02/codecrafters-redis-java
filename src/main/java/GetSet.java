@@ -25,8 +25,13 @@ public class GetSet {
     }
     // Method for inserting the key with expiry time
     public static void setKeyWithExpiry(Map<String,Object[]> map, String key,String value, Long expiryTime){
-        long insertionTimeOfKey = System.currentTimeMillis();
-        map.put(key,new Object[]{value,expiryTime,insertionTimeOfKey});
+
+        if(expiryTime !=null){
+            long insertionTimeOfKey = System.currentTimeMillis();
+            map.put(key,new Object[]{value,expiryTime,insertionTimeOfKey});
+        }else{
+            map.put(key,new Object[]{value,null,null});
+        }
     }
 
     // method to check weather the key has expired or not
