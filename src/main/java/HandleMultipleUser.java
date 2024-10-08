@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class HandleMultipleUser extends Thread {
     private final Socket clientSocket;
-    private  Map<String,Object> map;
+    private  Map<String,Object[]> map;
     // Constructor to accept client socket
     public HandleMultipleUser(Socket clientSocket)
     {
@@ -48,7 +48,9 @@ public class HandleMultipleUser extends Thread {
                         String key = in.readLine();
                         in.readLine();
                         String value = in.readLine();
-                        GetSet.setKey(map,key,value);
+                        in.readLine();
+                        Long expTime= Long.parseLong(in.readLine());
+                        GetSet.setKeyWithExpiry(map,key,value,expTime);
                         clientSocket.getOutputStream().write("+OK\r\n".getBytes());
                         clientSocket.getOutputStream().flush();
                 }
@@ -60,6 +62,11 @@ public class HandleMultipleUser extends Thread {
                         clientSocket.getOutputStream().write(
                                 String.format("$%d\r\n%s\r\n",value.toString().length(),value).getBytes());
                         clientSocket.getOutputStream().flush();
+                    }
+                    else{
+                        clientSocket.getOutputStream().write(
+                                String.format("$%d\r\n",-1).getBytes()
+                        );
                     }
 //                    System.out.println(map);
                 }
