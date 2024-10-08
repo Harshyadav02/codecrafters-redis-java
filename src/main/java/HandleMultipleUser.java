@@ -26,7 +26,7 @@ public class HandleMultipleUser extends Thread {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
 
-                System.out.println("InputLine is --> "+inputLine);
+
                 // Respond to PING command
                 if (inputLine.trim().equalsIgnoreCase("PING")) {
                     clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
@@ -49,9 +49,8 @@ public class HandleMultipleUser extends Thread {
                         in.readLine();
                         String value = in.readLine();
                         GetSet.setKey(map,key,value);
-                        clientSocket.getOutputStream().write("OK\r\n".getBytes());
+                        clientSocket.getOutputStream().write("OK".getBytes());
                         clientSocket.getOutputStream().flush();
-//                    System.out.println(map);
                 }
                 else if("GET".equalsIgnoreCase(inputLine)){
                     in.readLine();
