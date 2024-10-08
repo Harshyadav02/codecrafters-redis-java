@@ -12,14 +12,16 @@ public class GetSet {
                     // check if key got expired
                  if (checkKeyExpiry((Long) value[1], (Long)value[2])) {
 
-                     return map.get(key);
+                     //return value
+                     return value[0];
                  }
                  else{
                      map.remove(key);
                      return null;
                  }
              }
-            return map.get(key);
+             //return value
+            return value[0];
     }
     // Method for inserting the key with expiry time
     public static void setKeyWithExpiry(Map<String,Object[]> map, String key,String value, Long expiryTime){
