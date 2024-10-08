@@ -42,14 +42,16 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().flush();
 
                 }
-
+                // // *5\r\n$3\r\nSET\r\n$9\r\nraspberry\r\n$6\r\nbanana\r\n$2\r\npx\r\n$3\r\n100\r\n
                 else if("SET".equalsIgnoreCase(inputLine)){
-                        in.readLine();
-                        String key = in.readLine();
-                        in.readLine();
-                        String value = in.readLine();
-                        in.readLine();
-                        Long expTime= Long.parseLong(in.readLine());
+                        in.readLine();                      // skipping size of key
+                        String key = in.readLine();         // extracting the actual key
+                        in.readLine();                      // skipping size of value
+                        String value = in.readLine();       // extracting the actual value
+                        in.readLine();                      // skipping size of time variable
+                        in.readLine();                      // skipping  time variable
+                        in.readLine();                      // skipping size of time in millisecond
+                        Long expTime= Long.parseLong(in.readLine());   // extracting the actual time
                         GetSet.setKeyWithExpiry(map,key,value,expTime);
                         clientSocket.getOutputStream().write("+OK\r\n".getBytes());
                         clientSocket.getOutputStream().flush();
@@ -63,10 +65,12 @@ public class HandleMultipleUser extends Thread {
                                 String.format("$%d\r\n%s\r\n",value.toString().length(),value).getBytes());
                         clientSocket.getOutputStream().flush();
                     }
+                    // if entry not found in map send null to client
                     else{
                         clientSocket.getOutputStream().write(
                                 String.format("$%d\r\n",-1).getBytes()
                         );
+                        clientSocket.getOutputStream().flush();
                     }
 //                    System.out.println(map);
                 }
