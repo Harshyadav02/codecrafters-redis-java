@@ -8,10 +8,10 @@ public class GetSet {
              Object[] value = map.get(key);
 
              // check if expiry time is given or not
+             System.out.println(value[2]);
              if(value[2] !=null) {
                     // check if key got expired
                  if (checkKeyExpiry((Long) value[1], (Long)value[2])) {
-
                      //return value
                      return value[0];
                  }
