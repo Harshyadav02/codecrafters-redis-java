@@ -26,7 +26,7 @@ public class HandleMultipleUser extends Thread {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
 
-
+                System.out.println("Received: " + inputLine);
                 // Respond to PING command
                 if (inputLine.trim().equalsIgnoreCase("PING")) {
                     clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
@@ -42,27 +42,36 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().flush();
 
                 }
-                // // *5\r\n$3\r\nSET\r\n$9\r\nraspberry\r\n$6\r\nbanana\r\n$2\r\npx\r\n$3\r\n100\r\n
+
                 else if("SET".equalsIgnoreCase(inputLine)){
-                        in.readLine();                      // skipping size of key
-                        String key = in.readLine();         // extracting the actual key
-                        in.readLine();                      // skipping size of value
-                        String value = in.readLine();       // extracting the actual value
-                        String timeVariable = in.readLine();// skipping size of time variable
-                        System.out.println("time variable : "+timeVariable);
-                        if(timeVariable != null && "$2".equalsIgnoreCase(timeVariable.trim()))
-                        {   System.out.println("time variable is not null");
-                            in.readLine();                      // skipping  time variable
-                            in.readLine();                      // skipping size of time in millisecond
-                            Long expTime= Long.parseLong(in.readLine());   // extracting the actual time
+                        in.readLine();                      // skipping size of key --> $9
+                        String key = in.readLine();         // extracting the actual key --> raspberry
+                        in.readLine();                      // skipping size of value  --> $6
+                        String value = in.readLine();       // extracting the actual value --> banana
+                        System.out.println("GOing to read time varaible size");
+                        String sizeOfTimeVariable = in.readLine();// skipping size of time variable  --> $2
+                        System.out.println("Time variable size is "+sizeOfTimeVariable);
+                    if(sizeOfTimeVariable !=null && sizeOfTimeVariable.startsWith("$"))
+
+                    {
+                        in.readLine();                      // skipping  time variable --> px
+                        in.readLine();                      // skipping size of time in millisecond --> $3
+
+                        try{
+                            long expTime= Long.parseLong(in.readLine());   // extracting the actual time
                             GetSet.setKeyWithExpiry(map,key,value,expTime);
-                        }else{
-                            System.out.println("time variable is null");
-                            GetSet.setKeyWithExpiry(map,key,value,null);
+                        }catch (Exception e){
+                            System.out.println(e.getMessage());
                         }
+                    }
+                    else{
+//                        System.out.println("Yes no time expiry provided");
+                        GetSet.setKeyWithExpiry(map,key,value,-1);
+                    }
                         clientSocket.getOutputStream().write("+OK\r\n".getBytes());
                         clientSocket.getOutputStream().flush();
                 }
+
                 else if("GET".equalsIgnoreCase(inputLine)){
                     in.readLine();
                     String key = in.readLine();
