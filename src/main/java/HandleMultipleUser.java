@@ -62,7 +62,6 @@ public class HandleMultipleUser extends Thread {
             }
         }
     }
-
     private void handleSetCommand(BufferedReader in) throws IOException {
         String keySize = in.readLine();
         if (keySize == null) return; // Handle unexpected input
