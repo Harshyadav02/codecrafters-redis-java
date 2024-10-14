@@ -20,6 +20,8 @@ public class Main {
 
                 // Create a new thread to handle this client
                 HandleMultipleUser clientHandler = new HandleMultipleUser(clientSocket);
+//                UserHandler clientHandler = new UserHandler(clientSocket);
+
                 clientHandler.start(); // Start the thread
             }
         } catch (IOException e) {
