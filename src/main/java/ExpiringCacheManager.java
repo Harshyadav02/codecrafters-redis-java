@@ -4,7 +4,10 @@ public class ExpiringCacheManager{
     // method to get value based on key if key is not expired
     public  Object getValue(Map<String, Object[]> map, String key) {
         Object[] value = map.get(key);
-        if(value.length == 1){
+        if(value == null){
+            return  null;
+        }
+        else if(value.length == 1){
 
             return  value[0];   // return key which has no expiry
         }
@@ -18,7 +21,7 @@ public class ExpiringCacheManager{
             return null;
         }
     }
-    
+
     // Method for inserting the key with expiry time
     public void setKeyWithExpiry(Map<String,Object[]> map, String key,String value, long expiryTime){
 
