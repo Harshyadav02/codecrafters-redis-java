@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 public class HandleMultipleUser extends Thread {
     private final Socket clientSocket;
-    private Map<String, Object[]> map;
+    private final Map<String, Object[]> map;
     private final ExpiringCacheManager cacheManager;
-
+    int arrayLength = 0;
     // Constructor to accept client socket
     public HandleMultipleUser(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -26,14 +26,16 @@ public class HandleMultipleUser extends Thread {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Input received: " + inputLine);
-
+                if(inputLine.startsWith("*")){
+                    arrayLength = Integer.parseInt(inputLine.substring(1));
+                }
                 // Respond to PING command
                 if (inputLine.trim().equalsIgnoreCase("PING")) {
                     clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
                     clientSocket.getOutputStream().flush(); // Ensure the response is sent
                 }
                 // Handle ECHO command
-                else if ("ECHO".equalsIgnoreCase(inputLine)) {
+                if ("ECHO".equalsIgnoreCase(inputLine)) {
                     in.readLine(); // Skip size of message
                     String message = in.readLine(); // Read message
                     clientSocket.getOutputStream().write(
@@ -41,11 +43,11 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().flush();
                 }
                 // Handle SET command
-                else if ("SET".equalsIgnoreCase(inputLine)) {
+                if ("SET".equalsIgnoreCase(inputLine)) {
                     handleSetCommand(in);
                 }
                 // Handle GET command
-                else if ("GET".equalsIgnoreCase(inputLine)) {
+                if ("GET".equalsIgnoreCase(inputLine)) {
                     handleGetCommand(in);
                 }
             }
@@ -72,30 +74,27 @@ public class HandleMultipleUser extends Thread {
             return; // Exit if the key is invalid
         }
 
-        String valueSize = in.readLine();
-        String value = in.readLine();
+        in.readLine();  // ignore value size
+        String value = in.readLine(); // read value
+
         if (value == null || value.isEmpty()) {
             clientSocket.getOutputStream().write("-ERR invalid value\r\n".getBytes());
             return; // Exit if the value is invalid
         }
-
-        String sizeOfTimeVariable = in.readLine();
-        long expTime = -1; // Default to -1 for no expiry
-        if (sizeOfTimeVariable != null && sizeOfTimeVariable.startsWith("$")) {
-            in.readLine(); // Skip time variable
-            in.readLine(); // Skip size of time
-            try {
-                expTime = Long.parseLong(in.readLine());
-            } catch (NumberFormatException e) {
-                clientSocket.getOutputStream().write("-ERR invalid expiry time\r\n".getBytes());
-                return; // Exit on parsing failure
-            }
+        //"*5\r\n$3\r\nSET\r\n$5\r\napple\r\n$6\r\norange\r\n$2\r\npx\r\n$3\r\n100\r\n"
+        long expiryTime = -1;
+        if(arrayLength >3){
+            in.readLine();  //   ignore expiry time variable length
+            in.readLine();  //   ignore expiry time variable time
+            in.readLine();  //   ignore expiry time size
+            expiryTime = Long.parseLong(in.readLine());  // read expiry time
         }
-
-        // Set the key-value pair with expiry
-        cacheManager.setKeyWithExpiry(map, key, value, expTime);
-        log("SET command executed: key = " + key + ", value = " + value + ", expiry = " + expTime);
-
+        try {
+            cacheManager.setKeyWithExpiry(map,key,value,expiryTime);
+        }
+        catch (Exception e){
+            log(e.getMessage());
+        }
         clientSocket.getOutputStream().write("+OK\r\n".getBytes());
         clientSocket.getOutputStream().flush(); // Ensure response is sent
     }
