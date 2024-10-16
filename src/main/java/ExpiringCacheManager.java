@@ -11,7 +11,6 @@ public class ExpiringCacheManager{
 
             return  value[0];   // return key which has no expiry
         }
-
         // check if key got expired
         else if (checkKeyExpiry((long)value[1], (long) value[2])) {
 
