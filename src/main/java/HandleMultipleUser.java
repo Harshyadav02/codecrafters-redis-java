@@ -1,3 +1,5 @@
+import RDB_Persistence.RedisConfigCommand;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,12 +10,14 @@ public class HandleMultipleUser extends Thread {
     private final Socket clientSocket;
     private final Map<String, Object[]> map;
     private final ExpiringCacheManager cacheManager;
+    RedisConfigCommand configuration ;
     int arrayLength = 0;
     // Constructor to accept client socket
-    public HandleMultipleUser(Socket clientSocket) {
+    public HandleMultipleUser(Socket clientSocket,String dir, String dbfilename) {
         this.clientSocket = clientSocket;
         cacheManager = new ExpiringCacheManager();
         map = new ConcurrentHashMap<>();
+        configuration = new RedisConfigCommand(dir,dbfilename);
     }
 
     @Override
@@ -25,7 +29,7 @@ public class HandleMultipleUser extends Thread {
             // Handle multiple commands from the client
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                System.out.println("Input received: " + inputLine);
+
                 if(inputLine.startsWith("*")){
                     arrayLength = Integer.parseInt(inputLine.substring(1));
                 }
@@ -35,7 +39,7 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().flush(); // Ensure the response is sent
                 }
                 // Handle ECHO command
-                if ("ECHO".equalsIgnoreCase(inputLine)) {
+                else if ("ECHO".equalsIgnoreCase(inputLine)) {
                     in.readLine(); // Skip size of message
                     String message = in.readLine(); // Read message
                     clientSocket.getOutputStream().write(
@@ -43,12 +47,28 @@ public class HandleMultipleUser extends Thread {
                     clientSocket.getOutputStream().flush();
                 }
                 // Handle SET command
-                if ("SET".equalsIgnoreCase(inputLine)) {
+                else if ("SET".equalsIgnoreCase(inputLine)) {
                     handleSetCommand(in);
                 }
                 // Handle GET command
-                if ("GET".equalsIgnoreCase(inputLine)) {
+                else if ("GET".equalsIgnoreCase(inputLine)) {
                     handleGetCommand(in);
+                }
+                else if("CONFIG".equalsIgnoreCase(inputLine)){
+
+                    in.readLine(); // ignore get size ;
+                    in.readLine();
+                    in.readLine();
+                    String configCommand = "CONFIG " + in.readLine().toLowerCase().trim(); // combining config get
+
+                    if(configCommand.contains("dir")){
+                        String dir = configuration.getDir();
+                        clientSocket.getOutputStream().write(dir.getBytes());
+
+                    }else{
+                        String dbFileName = configuration.getDbFileName();
+                        clientSocket.getOutputStream().write(dbFileName.getBytes());
+                    }
                 }
             }
         } catch (IOException e) {
@@ -81,7 +101,6 @@ public class HandleMultipleUser extends Thread {
             clientSocket.getOutputStream().write("-ERR invalid value\r\n".getBytes());
             return; // Exit if the value is invalid
         }
-        //"*5\r\n$3\r\nSET\r\n$5\r\napple\r\n$6\r\norange\r\n$2\r\npx\r\n$3\r\n100\r\n"
         long expiryTime = -1;
         if(arrayLength >3){
             in.readLine();  //   ignore expiry time variable length
