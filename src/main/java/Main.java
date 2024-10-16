@@ -5,6 +5,18 @@ import java.net.Socket;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Server started. Logs will appear here!");
+        String dir = "/var/lib/redis";
+        String dbfilename = "dump.rdb";
+
+        // Parse command-line arguments
+        for (int i = 0; i < args.length; i++) {
+            if ("--dir".equals(args[i]) && i + 1 < args.length) {
+                dir = args[i + 1];
+            }
+            if ("--dbfilename".equals(args[i]) && i + 1 < args.length) {
+                dbfilename = args[i + 1];
+            }
+        }
 
         int port = 6379;
         ServerSocket serverSocket = null;
@@ -19,9 +31,7 @@ public class Main {
                 
 
                 // Create a new thread to handle this client
-                HandleMultipleUser clientHandler = new HandleMultipleUser(clientSocket);
-//                UserHandler clientHandler = new UserHandler(clientSocket);
-
+                HandleMultipleUser clientHandler = new HandleMultipleUser(clientSocket,dir,dbfilename);
                 clientHandler.start(); // Start the thread
             }
         } catch (IOException e) {
