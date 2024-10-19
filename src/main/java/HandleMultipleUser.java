@@ -70,6 +70,12 @@ public class HandleMultipleUser extends Thread {
                         clientSocket.getOutputStream().write(dbFileName.getBytes());
                     }
                 }
+                else if("INFO".equalsIgnoreCase(inputLine)){
+                    
+
+                    clientSocket.getOutputStream().write(String.format("$11\r\nrole:master\r\n").getBytes());
+                    clientSocket.getOutputStream().flush();
+                }
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
