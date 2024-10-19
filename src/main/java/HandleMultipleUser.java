@@ -1,11 +1,11 @@
-import RDB_Persistence.RedisConfigCommand;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import RDB_Persistence.RedisConfigCommand;
 public class HandleMultipleUser extends Thread {
     private final Socket clientSocket;
     private final Map<String, Object[]> map;
