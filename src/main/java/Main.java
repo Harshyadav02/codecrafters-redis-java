@@ -7,7 +7,7 @@ public class Main {
         System.out.println("Server started. Logs will appear here!");
         String dir = "/var/lib/redis";
         String dbfilename = "dump.rdb";
-
+        int port = 6379;
         // Parse command-line arguments
         for (int i = 0; i < args.length; i++) {
             if ("--dir".equals(args[i]) && i + 1 < args.length) {
@@ -16,9 +16,12 @@ public class Main {
             if ("--dbfilename".equals(args[i]) && i + 1 < args.length) {
                 dbfilename = args[i + 1];
             }
+            if("--port".equals(args[i])&& i+1 < args.length){
+                port = Integer.parseInt(args[i+1]);
+            }
         }
 
-        int port = 6379;
+        
         ServerSocket serverSocket = null;
 
         try {
