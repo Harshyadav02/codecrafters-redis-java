@@ -72,8 +72,13 @@ public class HandleMultipleUser extends Thread {
                 }
                 else if("INFO".equalsIgnoreCase(inputLine)){
                     
-
-                    clientSocket.getOutputStream().write(String.format("$11\r\nrole:master\r\n").getBytes());
+                    boolean replication = (boolean)Main.config.get("replicaof");
+                    if(replication){
+                        clientSocket.getOutputStream().write(String.format("$10\r\nrole:slave\r\n").getBytes());
+                    }else{
+                        clientSocket.getOutputStream().write(String.format("$11\r\nrole:master\r\n").getBytes());
+                    }
+                    
                     clientSocket.getOutputStream().flush();
                 }
             }
