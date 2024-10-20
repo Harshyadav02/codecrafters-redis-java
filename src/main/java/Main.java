@@ -7,9 +7,9 @@ public class Main {
     static Map<String, Object> config = new HashMap<>();
     public static void main(String[] args) {
         System.out.println("Server started. Logs will appear here!");
-       String host  = "";
+       
         int port = 6379;
-        boolean isMaster = true;
+       
         config.put("port",port);
         config.put("replicaof",false);
         // Parse command-line arguments
@@ -29,8 +29,7 @@ public class Main {
             }
             if("--replicaof".equals(args[i]) && i+1 < args.length){
                 config.put("replicaof",true);
-                isMaster = false;
-                host = args[i+1];
+                
             }
         }
         
