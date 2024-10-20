@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import RDB_Persistence.RedisConfigCommand;
@@ -72,14 +73,7 @@ public class HandleMultipleUser extends Thread {
                 }
                 else if("INFO".equalsIgnoreCase(inputLine)){
                     
-                    boolean replication = (boolean)Main.config.get("replicaof");
-                    if(replication){
-                        clientSocket.getOutputStream().write(String.format("$10\r\nrole:slave\r\n").getBytes());
-                    }else{
-                        clientSocket.getOutputStream().write(String.format("$11\r\nrole:master\r\n").getBytes());
-                    }
-                    
-                    clientSocket.getOutputStream().flush();
+                   handleInfoCommand();
                 }
             }
         } catch (IOException e) {
@@ -94,6 +88,35 @@ public class HandleMultipleUser extends Thread {
                 System.out.println("IOException: " + e.getMessage());
             }
         }
+    }
+
+    private void handleInfoCommand(){
+
+        boolean replication = (boolean) Main.config.get("replicaof");
+        String role = replication ? "slave" : "master";  // Set role dynamically based on replication flag
+        
+        String master_replid = (UUID.randomUUID().toString().replaceAll("-", "")
+                              + UUID.randomUUID().toString().replaceAll("-", ""))
+                              .substring(0, 40); 
+        int master_repl_offset = 0;
+        
+        // Build the response string
+        String response = String.format("role:%s\r\nmaster_replid:%s\r\nmaster_repl_offset:%d\r\n", 
+                                        role, master_replid, master_repl_offset);
+        
+        // length of the response string
+        int length = response.length();
+        
+        try {
+            
+            clientSocket.getOutputStream().write(
+                String.format("$%d\r\n%s\r\n", length, response).getBytes()  
+            );
+            clientSocket.getOutputStream().flush();
+        } catch (Exception e) {
+            e.printStackTrace();  
+        }
+        
     }
     private void handleSetCommand(BufferedReader in) throws IOException {
         String keySize = in.readLine();
