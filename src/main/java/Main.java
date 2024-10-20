@@ -3,15 +3,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+
+import UserHandler.HandleMultipleUser;
 public class Main {
     static Map<String, Object> config = new HashMap<>();
     public static void main(String[] args) {
         System.out.println("Server started. Logs will appear here!");
-       
         int port = 6379;
-       
         config.put("port",port);
         config.put("replicaof",false);
+
         // Parse command-line arguments
         for (int i = 0; i < args.length; i++) {
             if ("--dir".equals(args[i]) && i + 1 < args.length) {
@@ -29,6 +30,8 @@ public class Main {
             }
             if("--replicaof".equals(args[i]) && i+1 < args.length){
                 config.put("replicaof",true);
+                config.put("Master-HOST",args[++i]);
+                config.put("Master-IP",args[++i]);
                 
             }
         }
@@ -46,7 +49,7 @@ public class Main {
                 
 
                 // Create a new thread to handle this client
-                HandleMultipleUser clientHandler = new HandleMultipleUser(clientSocket,(String)config.get("dir"),(String)config.get("dbfilename"));
+                HandleMultipleUser clientHandler = new HandleMultipleUser(clientSocket,(String)config.get("dir"),(String)config.get("dbfilename"),config);
                 clientHandler.start(); // Start the thread
             }
         } catch (IOException e) {
