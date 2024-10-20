@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import Replication.HandShake;
 import UserHandler.HandleMultipleUser;
 public class Main {
     static Map<String, Object> config = new HashMap<>();
@@ -30,10 +31,12 @@ public class Main {
             }
             if("--replicaof".equals(args[i]) && i+1 < args.length){
                 config.put("replicaof",true);
-                config.put("Master-HOST",args[++i]);
-                config.put("Master-IP",args[++i]);
-                
+                config.put("Master-HOST",args[++i].split("\\s+")[0]);  // reterive host of master
+                config.put("Master-PORT",args[i].split("\\s+")[1]);  // reterive port of master
+                HandShake handshake = new HandShake();
+                handshake.threeWayHandshake((String)config.get("Master-HOST"), Integer.parseInt((String)config.get("Master-PORT")));
             }
+
         }
         
         
