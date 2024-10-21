@@ -34,7 +34,7 @@ public class Main {
                 config.put("Master-HOST",args[++i].split("\\s+")[0]);  // reterive host of master
                 config.put("Master-PORT",args[i].split("\\s+")[1]);  // reterive port of master
                 HandShake handshake = new HandShake();
-                handshake.threeWayHandshake((String)config.get("Master-HOST"), Integer.parseInt((String)config.get("Master-PORT")));
+                handshake.threeWayHandshake((String)config.get("Master-HOST"), Integer.parseInt((String)config.get("Master-PORT")), (Integer)config.get("port"));
             }
 
         }
