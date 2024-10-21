@@ -21,18 +21,18 @@ public class HandShake {
             
             // Send the PING command
             out.write(pingCommand.getBytes());
-            Thread.sleep(10);   
+            Thread.sleep(20);   
 
             // Send the first REPLCONF command (listening-port)
             out.write(replconfListeningPortCommand.getBytes());
-            Thread.sleep(10);  // 
+            Thread.sleep(20);  // 
 
             // Send the second REPLCONF command (capa psync2)
             out.write(replconfCapaCommand.getBytes());
 
             // Ensure all commands are sent
             out.flush();
-            Thread.sleep(10);
+            Thread.sleep(20);
         } catch (InterruptedException e) {
             
             e.printStackTrace();
