@@ -16,7 +16,7 @@ public class HandShake {
             
             // Second REPLCONF: REPLCONF capa psync2
             String replconfCapaCommand = "*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n";
-
+            String PSYNC = "*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n";
             OutputStream out = masterSocket.getOutputStream();
             
             // Send the PING command
@@ -29,7 +29,8 @@ public class HandShake {
 
             // Send the second REPLCONF command (capa psync2)
             out.write(replconfCapaCommand.getBytes());
-
+            Thread.sleep(20);
+            out.write(PSYNC.getBytes());
             // Ensure all commands are sent
             out.flush();
             Thread.sleep(20);
