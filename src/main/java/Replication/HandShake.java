@@ -27,7 +27,7 @@ public class HandShake {
         }
     }
 
-    // Master handshake implementation
+   
 
     private void sendPingCommand(OutputStream outputStream) throws IOException, InterruptedException {
         String pingCommand = "*1\r\n$4\r\nPING\r\n";
