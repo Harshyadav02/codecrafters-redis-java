@@ -8,8 +8,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import RDB_Persistence.RedisConfigCommand;
-
+import Replication.UtlityMethods;
 public class HandleMultipleUser extends Thread {
+    private final UtlityMethods replicationUtlityMethods;
     private final Socket clientSocket;
     private final Map<String, Object[]> map;
     private final Map<String, Object> config;
@@ -19,6 +20,7 @@ public class HandleMultipleUser extends Thread {
 
     // Constructor to accept client socket
     public HandleMultipleUser(Socket clientSocket, String dir, String dbfilename,Map<String, Object> config) {
+        this.replicationUtlityMethods = new UtlityMethods(clientSocket);
         this.clientSocket = clientSocket;
         cacheManager = new ExpiringCacheManager();
         map = new ConcurrentHashMap<>();
@@ -63,6 +65,9 @@ public class HandleMultipleUser extends Thread {
                 // Handle info command
                 else if ("INFO".equalsIgnoreCase(inputLine)) {
                     handleInfoCommand();
+                }
+                else if("REPLCONF".equalsIgnoreCase(inputLine)){
+                    replicationUtlityMethods.handleMasterReplconfCommand(in);
                 }
             }
         } catch (IOException e) {
